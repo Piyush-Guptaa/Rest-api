@@ -2,7 +2,9 @@ from flask import Flask, redirect
 from flask import jsonify
 import requests
 
-app = flask.Flask(__name__)
+# app = flask.Flask(__name__)
+app = Flask(__name__)
+
 
 @app.route('/hello/', methods=['GET', 'POST'])
 def welcome():
@@ -15,3 +17,5 @@ def hello():
                     'address': 'India'})
 
 
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=105)

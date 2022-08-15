@@ -1,21 +1,21 @@
-from flask import Flask, redirect
-from flask import jsonify
-import requests
+import flask
+from flask import request
+import pandas as pd
+from datetime import datetime as dt
 
-# app = flask.Flask(__name__)
-app = Flask(__name__)
+data = pd.read_csv('data.csv', names=['s', 'e', 'm']).set_index('m')
 
+series = pd.Series(index=range(data.s.min(), dt.now().year + 1))
+for m in data.index:
+    series.loc[data.loc[m].s:data.loc[m].e] = m
 
-@app.route('/hello/', methods=['GET', 'POST'])
-def welcome():
-    return "Hello World!"
-
-
-@app.route('/name')
-def hello():
-    return jsonify({'name': 'Piyush',
-                    'address': 'India'})
+app = flask.Flask(__name__)
 
 
-if __name__ == '__main__':
-    app.run()
+@app.route('/', methods=['GET'])
+def home():
+    year = int(request.args['year'])
+    try:
+        return series.loc[year]
+    except KeyError:
+        return f'Invalid input ({series.index.min()} - {series.index.max()})'
